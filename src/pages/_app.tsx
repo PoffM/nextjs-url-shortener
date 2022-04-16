@@ -1,29 +1,39 @@
+import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import { httpBatchLink } from "@trpc/client/links/httpBatchLink";
 import { loggerLink } from "@trpc/client/links/loggerLink";
 import { withTRPC } from "@trpc/next";
 import { NextPage } from "next";
 import { AppProps } from "next/app";
-import { AppType } from "next/dist/shared/lib/utils";
-import { ReactElement, ReactNode } from "react";
+import { PropsWithChildren, ReactElement, useMemo } from "react";
 import superjson from "superjson";
 import { DefaultLayout } from "~/components/DefaultLayout";
 import { AppRouter } from "~/server/routers/_app";
 import { SSRContext } from "~/utils/trpc";
 
 export type NextPageWithLayout = NextPage & {
-  getLayout?: (page: ReactElement) => ReactNode;
+  getLayout?: (page: ReactElement) => ReactElement<unknown> | null;
 };
 
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout;
 };
 
-const MyApp = (({ Component, pageProps }: AppPropsWithLayout) => {
+function UrlShortenerApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout =
     Component.getLayout ?? ((page) => <DefaultLayout>{page}</DefaultLayout>);
 
-  return getLayout(<Component {...pageProps} />);
-}) as AppType;
+  return <AppWrapper>{getLayout(<Component {...pageProps} />)}</AppWrapper>;
+}
+
+/** Wrapper with all context providers. */
+export function AppWrapper({ children }: PropsWithChildren<unknown>) {
+  const theme = useMemo(
+    () => extendTheme({ config: { initialColorMode: "dark" } }),
+    []
+  );
+
+  return <ChakraProvider theme={theme}>{children}</ChakraProvider>;
+}
 
 function getBaseUrl() {
   if (typeof window !== "undefined") {
@@ -104,4 +114,4 @@ export default withTRPC<AppRouter>({
     // For app caching with SSR see https://trpc.io/docs/caching
     return {};
   },
-})(MyApp);
+})(UrlShortenerApp);
