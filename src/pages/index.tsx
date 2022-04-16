@@ -1,14 +1,14 @@
-import { trpc } from '../utils/trpc';
-import { NextPageWithLayout } from './_app';
-import Link from 'next/link';
+import { trpc } from "../utils/trpc";
+import { NextPageWithLayout } from "./_app";
+import Link from "next/link";
 
 const IndexPage: NextPageWithLayout = () => {
   const utils = trpc.useContext();
-  const postsQuery = trpc.useQuery(['post.all']);
-  const addPost = trpc.useMutation('post.add', {
+  const postsQuery = trpc.useQuery(["post.all"]);
+  const addPost = trpc.useMutation("post.add", {
     async onSuccess() {
       // refetches posts after a post is added
-      await utils.invalidateQueries(['post.all']);
+      await utils.invalidateQueries(["post.all"]);
     },
   });
 
@@ -30,7 +30,7 @@ const IndexPage: NextPageWithLayout = () => {
 
       <h2>
         Posts
-        {postsQuery.status === 'loading' && '(loading)'}
+        {postsQuery.status === "loading" && "(loading)"}
       </h2>
       {postsQuery.data?.map((item) => (
         <article key={item.id}>
@@ -44,6 +44,7 @@ const IndexPage: NextPageWithLayout = () => {
       <hr />
 
       <form
+        // eslint-disable-next-line @typescript-eslint/no-misused-promises
         onSubmit={async (e) => {
           e.preventDefault();
           /**
@@ -52,7 +53,9 @@ const IndexPage: NextPageWithLayout = () => {
            * @link https://react-hook-form.com/
            */
 
+          // eslint-disable-next-line
           const $text: HTMLInputElement = (e as any).target.elements.text;
+          // eslint-disable-next-line
           const $title: HTMLInputElement = (e as any).target.elements.title;
           const input = {
             title: $title.value,
@@ -61,8 +64,10 @@ const IndexPage: NextPageWithLayout = () => {
           try {
             await addPost.mutateAsync(input);
 
-            $title.value = '';
-            $text.value = '';
+            $title.value = "";
+            $text.value = "";
+
+            // eslint-disable-next-line no-empty
           } catch {}
         }}
       >
@@ -82,7 +87,7 @@ const IndexPage: NextPageWithLayout = () => {
         <br />
         <input type="submit" disabled={addPost.isLoading} />
         {addPost.error && (
-          <p style={{ color: 'red' }}>{addPost.error.message}</p>
+          <p style={{ color: "red" }}>{addPost.error.message}</p>
         )}
       </form>
     </>
