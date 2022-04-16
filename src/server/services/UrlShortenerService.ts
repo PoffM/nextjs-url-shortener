@@ -3,7 +3,7 @@ import Hashids from "hashids/cjs";
 import Url from "url-parse";
 
 export class UrlShortenerService {
-  private hashids = new Hashids("test-salt", 7);
+  private hashids = new Hashids("my-salt", 7);
 
   constructor(
     private shortenedUrlRepo: Pick<
@@ -21,7 +21,7 @@ export class UrlShortenerService {
       url.set("slashes", true);
     }
 
-    const formattedUrl = url.toString();
+    const formattedUrl = url.toString().replace(/^https\/\/:@/, "https://");
 
     const shortenedUrl = await this.shortenedUrlRepo.upsert({
       where: {
@@ -40,8 +40,14 @@ export class UrlShortenerService {
   }
 
   public async unshortenUrl(slug: string) {
+    const id = this.hashids.decode(slug)[0];
+
+    if (id === undefined) {
+      throw new Error(`Invalid slug ${slug}`);
+    }
+
     const url = await this.shortenedUrlRepo.findUnique({
-      where: { originalUrl: slug },
+      where: { id },
     });
 
     if (!url) {

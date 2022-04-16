@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import * as trpc from '@trpc/server';
-import * as trpcNext from '@trpc/server/adapters/next';
+import * as trpc from "@trpc/server";
+import * as trpcNext from "@trpc/server/adapters/next";
+import { prisma } from "./prisma";
+import { UrlShortenerService } from "./services/UrlShortenerService";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 interface CreateContextOptions {
@@ -12,7 +14,9 @@ interface CreateContextOptions {
  * This is useful for testing when we don't want to mock Next.js' request/response
  */
 export async function createContextInner(_opts: CreateContextOptions) {
-  return await Promise.resolve({});
+  const urlShortenerService = new UrlShortenerService(prisma.shortenedUrl);
+
+  return await Promise.resolve({ urlShortenerService });
 }
 
 export type Context = trpc.inferAsyncReturnType<typeof createContextInner>;
@@ -22,7 +26,7 @@ export type Context = trpc.inferAsyncReturnType<typeof createContextInner>;
  * @link https://trpc.io/docs/context
  */
 export async function createContext(
-  opts: trpcNext.CreateNextContextOptions,
+  opts: trpcNext.CreateNextContextOptions
 ): Promise<Context> {
   // for API-response caching see https://trpc.io/docs/caching
 

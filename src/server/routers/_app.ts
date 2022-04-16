@@ -3,7 +3,7 @@
  */
 import superjson from "superjson";
 import { createRouter } from "../createRouter";
-import { postRouter } from "./post";
+import { urlShortenerRouter } from "./urlShortenerRouter";
 
 /**
  * Create your application's root router
@@ -26,13 +26,8 @@ export const appRouter = createRouter()
    * Add a health check endpoint to be called with `/api/trpc/healthz`
    */
   .query("healthz", {
-    resolve() {
-      return "yay!";
-    }
+    resolve: () => "yay!",
   })
-  /**
-   * Merge `postRouter` under `post.`
-   */
-  .merge("post.", postRouter);
+  .merge(urlShortenerRouter);
 
 export type AppRouter = typeof appRouter;
