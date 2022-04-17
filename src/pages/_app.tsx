@@ -5,7 +5,6 @@ import { withTRPC } from "@trpc/next";
 import { NextPage } from "next";
 import { AppProps } from "next/app";
 import { PropsWithChildren, ReactElement, useMemo } from "react";
-import superjson from "superjson";
 import { DefaultLayout } from "~/components/DefaultLayout";
 import { AppRouter } from "~/server/routers/_app";
 import { SSRContext } from "~/utils/trpc";
@@ -77,10 +76,6 @@ export default withTRPC<AppRouter>({
           url: `${getBaseUrl()}/api/trpc`,
         }),
       ],
-      /**
-       * @link https://trpc.io/docs/data-transformers
-       */
-      transformer: superjson,
       /**
        * @link https://react-query.tanstack.com/reference/QueryClient
        */

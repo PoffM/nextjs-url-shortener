@@ -45,7 +45,6 @@
     "react-hook-form": "^7.29.0",
     "react-query": "^3.27.0",
     "start-server-and-test": "^1.12.0",
-    "superjson": "^1.7.4",
     "url-parse": "^1.5.10",
     "zod": "^3.0.0"
   },
