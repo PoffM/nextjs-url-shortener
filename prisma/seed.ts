@@ -8,14 +8,14 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  const testUrl = "https://google.ca"
+  const testUrl = "https://google.ca";
 
   await prisma.shortenedUrl.upsert({
     where: {
       originalUrl: testUrl,
     },
     create: {
-      originalUrl: testUrl
+      originalUrl: testUrl,
     },
     update: {},
   });

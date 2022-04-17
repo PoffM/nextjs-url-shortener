@@ -1,9 +1,9 @@
-version: '3.6'
+version: "3.6"
 services:
   postgres:
     image: postgres:13
     ports:
-      - '5832:5432' # expose pg on port 5832 to not collide with pg from elswhere
+      - "5832:5432" # expose pg on port 5832 to not collide with pg from elswhere
     restart: always
     volumes:
       - db_data:/var/lib/postgresql/data

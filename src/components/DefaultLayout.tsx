@@ -17,4 +17,4 @@ export function DefaultLayout({ children }: DefaultLayoutProps) {
       )}
     </>
   );
-};
+}
