@@ -7,18 +7,36 @@ import {
   Path,
   UnpackNestedValue,
   useForm,
+  UseFormReturn,
 } from "react-hook-form";
 import { UseMutationResult } from "react-query";
-import { trpc } from "~/utils/trpc";
+import type { AppRouter } from "~/server/routers/_app";
+import { inferMutationInput, inferMutationOutput, trpc } from "~/utils/trpc";
 
-export type MutationFormProps<TOutput, TInput> = PropsWithChildren<{
+type MutationKey = keyof AppRouter["_def"]["mutations"];
+
+export type MutationFormProps<
+  TPath extends MutationKey,
+  TInput = inferMutationInput<TPath>,
+  TOutput = inferMutationOutput<TPath>
+> = PropsWithChildren<{
   mutation: UseMutationResult<
     TOutput,
     ReturnType<typeof trpc.useMutation>["error"],
     TInput
   >;
   defaultValues?: UnpackNestedValue<DeepPartial<TInput>>;
+  onSuccess?: OnSuccess<TPath, TInput, TOutput>;
 }>;
+
+export type OnSuccess<
+  TPath extends MutationKey,
+  TInput = inferMutationInput<TPath>,
+  TOutput = inferMutationOutput<TPath>
+> = (args: {
+  form: UseFormReturn<TInput>;
+  data: TOutput;
+}) => Promise<unknown> | void;
 
 /**
  * Renders a form that:
@@ -26,11 +44,16 @@ export type MutationFormProps<TOutput, TInput> = PropsWithChildren<{
  * * Submits the data with a TRPC mutation.
  * * Provides form and field error messages from the back-end.
  */
-export function MutationForm<TOutput, TInput>({
+export function MutationForm<
+  TPath extends MutationKey,
+  TInput = inferMutationInput<TPath>,
+  TOutput = inferMutationOutput<TPath>
+>({
   children,
   mutation,
   defaultValues,
-}: MutationFormProps<TOutput, TInput>) {
+  onSuccess,
+}: MutationFormProps<TPath, TInput, TOutput>) {
   const form = useForm<TInput>({ defaultValues });
 
   // Top-level form error message:
@@ -40,6 +63,7 @@ export function MutationForm<TOutput, TInput>({
     setFormError(null);
     try {
       return await mutation.mutateAsync(input as TInput, {
+        onSuccess: (data) => onSuccess?.({ data, form }),
         onError: (error) => {
           const zodError = error?.data?.zodError;
           if (zodError) {

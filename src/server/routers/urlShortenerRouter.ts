@@ -8,7 +8,7 @@ function trimString(input: unknown) {
 /** URL shortener endpoints */
 export const urlShortenerRouter = createRouter().mutation("shortenUrl", {
   input: z.object({
-    originalUrl: z.preprocess(trimString, z.string().nonempty()),
+    originalUrl: z.preprocess(trimString, z.string().min(1, "Required")),
   }),
   resolve: ({ ctx, input }) =>
     ctx.urlShortenerService.shortenUrl(input.originalUrl),
