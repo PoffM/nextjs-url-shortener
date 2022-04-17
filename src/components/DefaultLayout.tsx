@@ -4,7 +4,7 @@ import { ReactQueryDevtools } from "react-query/devtools";
 
 type DefaultLayoutProps = { children: ReactNode };
 
-export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
+export function DefaultLayout({ children }: DefaultLayoutProps) {
   return (
     <>
       <Head>
