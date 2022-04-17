@@ -12,7 +12,8 @@ describe("URL shortener router", () => {
 
     expect(shortenedUrl).toEqual({
       originalUrl: "youtube.com",
-      slug: "Dox4Qbr",
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      slug: expect.stringMatching(/^.{7}$/),
     });
   });
 });
