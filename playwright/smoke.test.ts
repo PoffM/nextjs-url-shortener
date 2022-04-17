@@ -5,7 +5,8 @@ test.setTimeout(35e3);
 test("go to /", async ({ page }) => {
   await page.goto("/");
 
-  await page.waitForSelector(`text=Starter`);
+  // Wait for the "Shorten" button:
+  await page.waitForSelector(`text=Shorten`);
 });
 
 test("test 404", async ({ page }) => {
