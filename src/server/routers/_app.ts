@@ -2,6 +2,7 @@
  * This file contains the root router of your tRPC-backend
  */
 import superjson from "superjson";
+import { ZodError } from "zod";
 import { createRouter } from "../createRouter";
 import { urlShortenerRouter } from "./urlShortenerRouter";
 
@@ -28,6 +29,18 @@ export const appRouter = createRouter()
   .query("healthz", {
     resolve: () => "yay!",
   })
-  .merge(urlShortenerRouter);
+  .merge(urlShortenerRouter)
+  .formatError(({ shape, error }) => {
+    return {
+      ...shape,
+      data: {
+        ...shape.data,
+        zodError:
+          error.code === "BAD_REQUEST" && error.cause instanceof ZodError
+            ? error.cause.flatten()
+            : null,
+      },
+    };
+  });
 
 export type AppRouter = typeof appRouter;

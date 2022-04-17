@@ -11,9 +11,7 @@ export const DefaultLayout = ({ children }: DefaultLayoutProps) => {
         <title>Nextjs URL Shortener</title>
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      <main>{children}</main>
-
+      {children}
       {process.env.NODE_ENV !== "production" && (
         <ReactQueryDevtools initialIsOpen={false} />
       )}

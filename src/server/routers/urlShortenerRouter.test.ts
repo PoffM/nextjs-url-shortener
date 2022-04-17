@@ -6,7 +6,9 @@ describe("URL shortener router", () => {
     const ctx = await createContextInner({});
     const caller = appRouter.createCaller(ctx);
 
-    const shortenedUrl = await caller.mutation("shortenUrl", "youtube.com");
+    const shortenedUrl = await caller.mutation("shortenUrl", {
+      originalUrl: "youtube.com",
+    });
 
     expect(shortenedUrl).toEqual({
       originalUrl: "youtube.com",
