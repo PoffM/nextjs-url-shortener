@@ -1,3 +1,4 @@
+import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { Box, Flex, Link, List, ListItem } from "@chakra-ui/react";
 import NextLink from "next/link";
 import { useState } from "react";
@@ -42,17 +43,20 @@ export function UrlShortenerForm() {
 
             return (
               <ListItem
-                key={savedUrl.slug}
+                key={`${index}_${savedUrl.slug}`}
                 p={3}
                 borderBottomWidth={
                   index !== savedUrls.length - 1 ? "1px" : undefined
                 }
                 display="flex"
+                alignItems="center"
                 gap={2}
               >
                 <Box flex={1}>{savedUrl.originalUrl}</Box>
                 <NextLink href={shortUrl} passHref>
-                  <Link>{shortUrl}</Link>
+                  <Link target="_blank" display="flex" alignItems="center">
+                    {shortUrl} <ExternalLinkIcon mx="2px" />
+                  </Link>
                 </NextLink>
               </ListItem>
             );
