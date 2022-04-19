@@ -1,5 +1,5 @@
 import { createContextInner } from "../context";
-import { appRouter } from "./_app";
+import { appRouter } from "./appRouter";
 
 describe("URL shortener router", () => {
   it("Shorten URL", async () => {

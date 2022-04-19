@@ -10,7 +10,7 @@ import {
   UseFormReturn,
 } from "react-hook-form";
 import { UseMutationResult } from "react-query";
-import type { AppRouter } from "~/server/routers/_app";
+import type { AppRouter } from "~/server/routers/appRouter";
 import { inferMutationInput, inferMutationOutput, trpc } from "~/utils/trpc";
 
 type MutationKey = keyof AppRouter["_def"]["mutations"];
