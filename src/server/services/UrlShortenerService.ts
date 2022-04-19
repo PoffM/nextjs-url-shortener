@@ -43,7 +43,7 @@ export class UrlShortenerService {
     const id = this.hashids.decode(slug)[0];
 
     if (id === undefined) {
-      throw new Error(`Invalid slug ${slug}`);
+      return null;
     }
 
     const url = await this.shortenedUrlRepo.findUnique({

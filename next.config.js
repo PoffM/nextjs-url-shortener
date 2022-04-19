@@ -29,7 +29,7 @@ module.exports = getConfig({
   async rewrites() {
     return [
       {
-        source: "/:slug((?!_next)(?!api\\/).*)",
+        source: "/:slug((?!_next)(?!api\\/)(?!404).*)",
         destination: "/api/redirect/:slug",
       },
     ];
