@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import Hashids from "hashids/cjs";
+import { NumberLike } from "hashids/cjs/util";
 import Url from "url-parse";
 
 export class UrlShortenerService {
@@ -40,7 +41,13 @@ export class UrlShortenerService {
   }
 
   public async unshortenUrl(slug: string) {
-    const id = this.hashids.decode(slug)[0];
+    let id: NumberLike | undefined;
+    try {
+      id = this.hashids.decode(slug)[0];
+    } catch {
+      // Return null if the decoding fails e.g. invalid slug format.
+      return null;
+    }
 
     if (id === undefined) {
       return null;
