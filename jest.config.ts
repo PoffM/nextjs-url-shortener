@@ -1,5 +1,11 @@
-import { compilerOptions } from "./tsconfig.json";
 import type { Config } from "@jest/types";
+import nextJest from "next/jest";
+import { compilerOptions } from "./tsconfig.json";
+
+const createJestConfig = nextJest({
+  // Provide the path to your Next.js app to load next.config.js and .env files in your test environment
+  dir: "./",
+});
 
 /**
  * Make `tsconfig.json`'s `paths` work in Jest
@@ -21,23 +27,13 @@ function makeModuleNameMapperFromTsConfig(srcPath: string) {
   return aliases;
 }
 
-const config: Config.InitialOptions = {
+const customConfig: Config.InitialOptions = {
   verbose: true,
-  roots: ["<rootDir>"],
-  testMatch: [
-    "**/tests/**/*.+(ts|tsx|js)",
-    "**/?(*.)+(spec|test).+(ts|tsx|js)",
-  ],
   testPathIgnorePatterns: ["<rootDir>/.next", "<rootDir>/playwright/"],
-  transform: {
-    "^.+\\.(js|jsx|ts|tsx)$": ["babel-jest", { presets: ["next/babel"] }],
-  },
-  transformIgnorePatterns: [
-    "/node_modules/",
-    "^.+\\.module\\.(css|sass|scss)$",
-  ],
-  testEnvironment: "jsdom",
+  testEnvironment: "jest-environment-jsdom",
   moduleNameMapper: makeModuleNameMapperFromTsConfig("<rootDir>"),
+  globalSetup: "./jest.setup.js",
 };
 
-export default config;
+// createJestConfig is exported this way to ensure that next/jest can load the Next.js config which is async
+export default createJestConfig(customConfig);

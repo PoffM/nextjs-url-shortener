@@ -3,7 +3,7 @@ on: [push]
 jobs:
   e2e:
     env:
-      DATABASE_URL: postgresql://postgres:@localhost:5432/trpcdb
+      DATABASE_URL: postgresql://postgres:@localhost:5432/appdb
       NODE_ENV: test
       NEXTAUTH_SECRET: supersecret
     runs-on: ${{ matrix.os }}
@@ -16,7 +16,7 @@ jobs:
         image: postgres:12.1
         env:
           POSTGRES_USER: postgres
-          POSTGRES_DB: trpcdb
+          POSTGRES_DB: appdb
         ports:
           - 5432:5432
     steps:
@@ -38,6 +38,7 @@ jobs:
       - run: yarn build
       - run: yarn test-start
       - run: yarn test-dev
+      - run: yarn test
 
       - name: Upload test results
         if: ${{ always() }}
