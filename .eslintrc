@@ -16,6 +16,7 @@
   },
   "rules": {
     "no-console": "warn",
-    "eqeqeq": 2
+    "eqeqeq": 2,
+    "@typescript-eslint/require-await": "off"
   }
 }

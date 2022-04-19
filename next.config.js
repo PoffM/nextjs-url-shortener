@@ -26,4 +26,12 @@ module.exports = getConfig({
   publicRuntimeConfig: {
     NODE_ENV: env.NODE_ENV,
   },
+  async rewrites() {
+    return [
+      {
+        source: "/:slug((?!_next)(?!api\\/).*)",
+        destination: "/api/redirect/:slug",
+      },
+    ];
+  },
 });
