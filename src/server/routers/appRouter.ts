@@ -13,11 +13,6 @@ import { urlShortenerRouter } from "./urlShortenerRouter";
  */
 export const appRouter = createRouter()
   /**
-   * Optionally do custom error (type safe!) formatting
-   * @link https://trpc.io/docs/error-formatting
-   */
-  // .formatError(({ shape, error }) => { })
-  /**
    * Add a health check endpoint to be called with `/api/trpc/healthz`
    */
   .query("healthz", {
@@ -30,9 +25,7 @@ export const appRouter = createRouter()
       data: {
         ...shape.data,
         zodError:
-          error.code === "BAD_REQUEST" && error.cause instanceof ZodError
-            ? error.cause.flatten()
-            : null,
+          error.cause instanceof ZodError ? error.cause.flatten() : null,
       },
     };
   });

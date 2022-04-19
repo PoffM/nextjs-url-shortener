@@ -6,7 +6,7 @@ import { NextPage } from "next";
 import { AppProps } from "next/app";
 import { PropsWithChildren, ReactElement, useMemo } from "react";
 import { DefaultLayout } from "~/components/DefaultLayout";
-import { AppRouter } from "~/server/routers/_app";
+import { AppRouter } from "~/server/routers/appRouter";
 import { SSRContext } from "~/utils/trpc";
 
 export type NextPageWithLayout = NextPage & {
@@ -55,7 +55,6 @@ function getBaseUrl() {
 }
 
 export default withTRPC<AppRouter>({
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   config() {
     /**
      * If you want to use SSR, you need to use the server's full URL

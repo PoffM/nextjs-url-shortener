@@ -15,7 +15,7 @@ export function UrlShortenerForm() {
   >([]);
 
   const onSuccess: OnSuccess<"shortenUrl"> = ({ data: savedUrl, form }) => {
-    setSavedUrls((current) => [...current, savedUrl].slice(-3));
+    setSavedUrls((current) => [savedUrl, ...current].slice(0, 3));
     form.reset();
   };
 
@@ -52,9 +52,22 @@ export function UrlShortenerForm() {
                 alignItems="center"
                 gap={2}
               >
-                <Box flex={1}>{savedUrl.originalUrl}</Box>
+                <Box
+                  flex={1}
+                  overflow="hidden"
+                  whiteSpace="nowrap"
+                  textOverflow="ellipsis"
+                  title={savedUrl.originalUrl}
+                >
+                  {savedUrl.originalUrl}
+                </Box>
                 <NextLink href={shortUrl} passHref>
-                  <Link target="_blank" display="flex" alignItems="center">
+                  <Link
+                    color="teal.400"
+                    target="_blank"
+                    display="flex"
+                    alignItems="center"
+                  >
                     {shortUrl} <ExternalLinkIcon mx="2px" />
                   </Link>
                 </NextLink>

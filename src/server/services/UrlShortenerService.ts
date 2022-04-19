@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import Hashids from "hashids/cjs";
 import { NumberLike } from "hashids/cjs/util";
-import Url from "url-parse";
+import { URL } from "url";
 
 export class UrlShortenerService {
   private hashids = new Hashids("my-salt", 7);
@@ -13,30 +13,22 @@ export class UrlShortenerService {
     >
   ) {}
 
-  public async shortenUrl(originalUrl: string) {
-    const url = new Url(originalUrl);
+  public async shortenUrl(inputUrl: string) {
+    const url = new URL(inputUrl).toString();
 
-    // Use https if there is no protocol:
-    if (!url.protocol) {
-      url.set("protocol", "https:");
-      url.set("slashes", true);
-    }
-
-    const formattedUrl = url.toString().replace(/^https\/\/:@/, "https://");
-
-    const shortenedUrl = await this.shortenedUrlRepo.upsert({
+    const { id, originalUrl } = await this.shortenedUrlRepo.upsert({
       where: {
-        originalUrl: formattedUrl,
+        originalUrl: url,
       },
       create: {
-        originalUrl: formattedUrl,
+        originalUrl: url,
       },
       update: {},
     });
 
     return {
       originalUrl,
-      slug: this.hashids.encode(shortenedUrl.id),
+      slug: this.hashids.encode(id),
     };
   }
 

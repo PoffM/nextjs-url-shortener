@@ -13,10 +13,10 @@ interface CreateContextOptions {
  * Inner function for `createContext` where we create the context.
  * This is useful for testing when we don't want to mock Next.js' request/response
  */
-export async function createContextInner(_opts: CreateContextOptions) {
+export function createContextInner(_opts: CreateContextOptions) {
   const urlShortenerService = new UrlShortenerService(prisma.shortenedUrl);
 
-  return await Promise.resolve({ urlShortenerService });
+  return { urlShortenerService };
 }
 
 export type Context = trpc.inferAsyncReturnType<typeof createContextInner>;
@@ -30,5 +30,5 @@ export async function createContext(
 ): Promise<Context> {
   // for API-response caching see https://trpc.io/docs/caching
 
-  return await createContextInner({});
+  return createContextInner({});
 }
