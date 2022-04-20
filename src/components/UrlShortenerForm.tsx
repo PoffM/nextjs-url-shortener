@@ -28,7 +28,7 @@ export function UrlShortenerForm() {
             inputProps={{
               size: "lg",
               placeholder: "Shorten your link",
-              autoComplete: "none",
+              autoComplete: "off",
             }}
           />
           <SubmitButton size="lg">Shorten</SubmitButton>
