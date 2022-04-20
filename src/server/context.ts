@@ -1,34 +1,41 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { PrismaClient } from "@prisma/client";
 import * as trpc from "@trpc/server";
 import * as trpcNext from "@trpc/server/adapters/next";
-import { prisma } from "./prisma";
+import { env } from "./env";
 import { UrlShortenerService } from "./services/UrlShortenerService";
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
-interface CreateContextOptions {
-  // session: Session | null
+const prismaGlobal = global as typeof global & {
+  prisma?: PrismaClient;
+};
+
+const prisma: PrismaClient =
+  prismaGlobal.prisma ||
+  new PrismaClient({
+    log:
+      env.NODE_ENV === "development" ? ["query", "error", "warn"] : ["error"],
+  });
+
+if (env.NODE_ENV !== "production") {
+  prismaGlobal.prisma = prisma;
 }
 
-/**
- * Inner function for `createContext` where we create the context.
- * This is useful for testing when we don't want to mock Next.js' request/response
- */
-export function createContextInner(_opts: CreateContextOptions) {
-  const urlShortenerService = new UrlShortenerService(prisma.shortenedUrl);
+const urlShortenerService = new UrlShortenerService(prisma.shortenedUrl);
 
-  return { urlShortenerService };
-}
-
-export type Context = trpc.inferAsyncReturnType<typeof createContextInner>;
+export const globalContext = { prisma, urlShortenerService };
 
 /**
  * Creates context for an incoming request
  * @link https://trpc.io/docs/context
  */
-export async function createContext(
-  opts: trpcNext.CreateNextContextOptions
-): Promise<Context> {
-  // for API-response caching see https://trpc.io/docs/caching
+export function requestContext(
+  opts: Partial<trpcNext.CreateNextContextOptions>
+) {
+  function redirect(status: number, url: string) {
+    opts.res?.redirect(status, url);
+  }
 
-  return createContextInner({});
+  return { ...globalContext, redirect };
 }
+
+export type RequestContext = trpc.inferAsyncReturnType<typeof requestContext>;

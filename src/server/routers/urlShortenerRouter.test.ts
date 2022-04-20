@@ -1,8 +1,8 @@
-import { createContextInner } from "../context";
+import { requestContext } from "../context";
 import { appRouter } from "./appRouter";
 
 describe("URL shortener router", () => {
-  const ctx = createContextInner({});
+  const ctx = requestContext({});
   const caller = appRouter.createCaller(ctx);
 
   it("Shortens a URL.", async () => {
