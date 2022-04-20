@@ -1,3 +1,4 @@
+import { NumberLike } from "hashids/cjs/util";
 import { NextApiHandler } from "next";
 import { globalContext } from "~/server/context";
 
@@ -6,12 +7,25 @@ import { globalContext } from "~/server/context";
  * When the shortened URL is invalid it redirects to a 404 page.
  */
 const handler: NextApiHandler = async (req, res) => {
-  const slug = req.url?.replace(/^\//, "") ?? "";
-  const originalUrl = await globalContext.urlShortenerService.unshortenUrl(
-    slug
-  );
+  const { hashids, prisma } = globalContext;
 
-  res.redirect(301, originalUrl ?? "/404");
+  const slug = req.url?.replace(/^\//, "") ?? "";
+
+  let id: NumberLike | undefined;
+  try {
+    id = hashids.decode(slug)[0];
+  } catch {
+    // Leave id as undefined if the decoding fails e.g. invalid slug format.
+  }
+
+  const shortenedUrl =
+    id !== undefined
+      ? await prisma.shortenedUrl.findUnique({
+          where: { id },
+        })
+      : null;
+
+  res.redirect(301, shortenedUrl?.originalUrl ?? "/404");
 };
 
 export default handler;

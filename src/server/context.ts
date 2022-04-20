@@ -2,8 +2,8 @@
 import { PrismaClient } from "@prisma/client";
 import * as trpc from "@trpc/server";
 import * as trpcNext from "@trpc/server/adapters/next";
+import Hashids from "hashids/cjs";
 import { env } from "./env";
-import { UrlShortenerService } from "./services/UrlShortenerService";
 
 const prismaGlobal = global as typeof global & {
   prisma?: PrismaClient;
@@ -20,22 +20,18 @@ if (env.NODE_ENV !== "production") {
   prismaGlobal.prisma = prisma;
 }
 
-const urlShortenerService = new UrlShortenerService(prisma.shortenedUrl);
+const hashids = new Hashids("my-salt", 7);
 
-export const globalContext = { prisma, urlShortenerService };
+export const globalContext = { prisma, hashids };
 
 /**
  * Creates context for an incoming request
  * @link https://trpc.io/docs/context
  */
 export function requestContext(
-  opts: Partial<trpcNext.CreateNextContextOptions>
+  _opts: Partial<trpcNext.CreateNextContextOptions>
 ) {
-  function redirect(status: number, url: string) {
-    opts.res?.redirect(status, url);
-  }
-
-  return { ...globalContext, redirect };
+  return { ...globalContext };
 }
 
 export type RequestContext = trpc.inferAsyncReturnType<typeof requestContext>;

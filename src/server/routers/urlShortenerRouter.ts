@@ -22,6 +22,22 @@ export const urlShortenerRouter = createRouter().mutation("shortenUrl", {
       z.string().nonempty("Required").url()
     ),
   }),
-  resolve: ({ ctx, input }) =>
-    ctx.urlShortenerService.shortenUrl(input.originalUrl),
+  async resolve({ ctx, input }) {
+    const url = new URL(input.originalUrl).toString();
+
+    const { id, originalUrl } = await ctx.prisma.shortenedUrl.upsert({
+      where: {
+        originalUrl: url,
+      },
+      create: {
+        originalUrl: url,
+      },
+      update: {},
+    });
+
+    return {
+      originalUrl,
+      slug: ctx.hashids.encode(id),
+    };
+  },
 });
