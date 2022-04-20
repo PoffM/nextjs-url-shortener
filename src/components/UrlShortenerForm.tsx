@@ -1,21 +1,28 @@
 import { ExternalLinkIcon } from "@chakra-ui/icons";
 import { Box, Flex, Link, List, ListItem } from "@chakra-ui/react";
+import { uniqueId } from "lodash";
 import NextLink from "next/link";
 import { useState } from "react";
+import { CopyButton } from "~/components/CopyButton";
 import { inferMutationOutput, trpc } from "~/utils/trpc";
 import { MutationForm, OnSuccess } from "./forms/MutationForm";
 import { SubmitButton } from "./forms/SubmitButton";
 import { TextField } from "./forms/TextField";
 
+/** Add a unique ID for the React key when rendering the UI. */
+interface LocalShortenedUrl extends inferMutationOutput<"shortenUrl"> {
+  key: string;
+}
+
 export function UrlShortenerForm() {
   const shortenUrl = trpc.useMutation("shortenUrl");
 
-  const [savedUrls, setSavedUrls] = useState<
-    inferMutationOutput<"shortenUrl">[]
-  >([]);
+  const [savedUrls, setSavedUrls] = useState<LocalShortenedUrl[]>([]);
 
   const onSuccess: OnSuccess<"shortenUrl"> = ({ data: savedUrl, form }) => {
-    setSavedUrls((current) => [savedUrl, ...current].slice(0, 3));
+    setSavedUrls((current) =>
+      [{ ...savedUrl, key: uniqueId() }, ...current].slice(0, 3)
+    );
     form.reset();
   };
 
@@ -43,7 +50,7 @@ export function UrlShortenerForm() {
 
             return (
               <ListItem
-                key={`${index}_${savedUrl.slug}`}
+                key={savedUrl.key}
                 p={3}
                 borderBottomWidth={
                   index !== savedUrls.length - 1 ? "1px" : undefined
@@ -60,7 +67,7 @@ export function UrlShortenerForm() {
                 >
                   {savedUrl.originalUrl}
                 </Box>
-                <Box>
+                <Flex gap={2}>
                   <NextLink href={shortUrl} passHref>
                     <Link
                       color="teal.400"
@@ -71,7 +78,8 @@ export function UrlShortenerForm() {
                       {shortUrl} <ExternalLinkIcon mx="2px" />
                     </Link>
                   </NextLink>
-                </Box>
+                  <CopyButton text={shortUrl} />
+                </Flex>
               </ListItem>
             );
           })}
