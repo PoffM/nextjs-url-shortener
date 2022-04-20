@@ -48,9 +48,8 @@ export function UrlShortenerForm() {
                 borderBottomWidth={
                   index !== savedUrls.length - 1 ? "1px" : undefined
                 }
-                display="flex"
+                display={{ sm: "flex" }}
                 alignItems="center"
-                gap={2}
               >
                 <Box
                   flex={1}
@@ -61,16 +60,18 @@ export function UrlShortenerForm() {
                 >
                   {savedUrl.originalUrl}
                 </Box>
-                <NextLink href={shortUrl} passHref>
-                  <Link
-                    color="teal.400"
-                    target="_blank"
-                    display="flex"
-                    alignItems="center"
-                  >
-                    {shortUrl} <ExternalLinkIcon mx="2px" />
-                  </Link>
-                </NextLink>
+                <Box>
+                  <NextLink href={shortUrl} passHref>
+                    <Link
+                      color="teal.400"
+                      target="_blank"
+                      display="flex"
+                      alignItems="center"
+                    >
+                      {shortUrl} <ExternalLinkIcon mx="2px" />
+                    </Link>
+                  </NextLink>
+                </Box>
               </ListItem>
             );
           })}
