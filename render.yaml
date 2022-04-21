@@ -5,7 +5,7 @@
 previewsExpireAfterDays: 2
 services:
   - type: web
-    name: nextjs-url-shortener
+    name: poffm-short
     env: node
     plan: free
     ## 👇 Specify the plan for the PR deployment:
