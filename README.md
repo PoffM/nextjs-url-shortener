@@ -2,7 +2,7 @@
 
 Full-stack TypeScript URL shortener web application.
 
-Enter a long URL to get 
+Enter a long URL to get a shortened URL that redirects to the original.
 
 [Deployed Application](https://poffm-short.onrender.com/)
 
