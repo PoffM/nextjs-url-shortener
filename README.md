@@ -1,11 +1,30 @@
 # Nextjs URL Shortener Web Application
 
+Full-stack TypeScript URL shortener web application.
+
+Enter a long URL to get 
+
+[Deployed Application](https://poffm-short.onrender.com/)
+
+## Stack
+
+* [TypeScript](https://www.typescriptlang.org/) (Language)
+* [React](https://reactjs.org/) (UI framework)
+* [Next.js](https://nextjs.org/) (React web application framework)
+* [Chakra UI](https://chakra-ui.com/) (UI component library)
+* [react-hook-form](https://react-hook-form.com/) (React form state management)
+* [TRPC](https://trpc.io/) (End-to-end type-safe REST API)
+* [Prisma](https://www.prisma.io/) (Type-safe ORM / database client)
+* [Postgres](https://www.postgresql.org/) (Database)
+* [Jest](https://jestjs.io/) (Testing framework)
+* [Playwright](https://playwright.dev/) (End-to-end testing framework)
+
 ## Requirements
 
 - Node >= 16
 - Docker (for running Postgres)
 
-## Setup
+## Local Development Setup
 
 ```bash
 yarn
