@@ -19,7 +19,7 @@ export const urlShortenerRouter = createRouter().mutation("shortenUrl", {
   input: z.object({
     originalUrl: z.preprocess(
       prepareUrl,
-      z.string().nonempty("Required").url()
+      z.string().nonempty("Required").max(2048).url()
     ),
   }),
   async resolve({ ctx, input }) {
