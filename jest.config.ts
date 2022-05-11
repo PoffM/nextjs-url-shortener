@@ -30,7 +30,6 @@ function makeModuleNameMapperFromTsConfig(srcPath: string) {
 const customConfig: Config.InitialOptions = {
   verbose: true,
   testPathIgnorePatterns: ["<rootDir>/.next", "<rootDir>/playwright/"],
-  testEnvironment: "jest-environment-jsdom",
   moduleNameMapper: makeModuleNameMapperFromTsConfig("<rootDir>"),
   globalSetup: "./jest.setup.js",
 };
