@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { createRouter } from "../createRouter";
 
+/** Clean up a user-supplied URL. */
 function prepareUrl(input: unknown) {
   if (typeof input === "string") {
     return (

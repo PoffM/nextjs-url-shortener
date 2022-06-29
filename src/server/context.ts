@@ -5,6 +5,8 @@ import * as trpcNext from "@trpc/server/adapters/next";
 import Hashids from "hashids/cjs";
 import { env } from "./env";
 
+// Prisma needs to be set up in a certain way in Next.js to avoid a common bug:
+// https://www.prisma.io/docs/guides/database/troubleshooting-orm/help-articles/nextjs-prisma-client-dev-practices
 const prismaGlobal = global as typeof global & {
   prisma?: PrismaClient;
 };
