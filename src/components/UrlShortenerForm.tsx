@@ -4,10 +4,11 @@ import { uniqueId } from "lodash";
 import NextLink from "next/link";
 import { useState } from "react";
 import { CopyButton } from "~/components/CopyButton";
-import { inferMutationOutput, trpc } from "~/utils/trpc";
+import { inferMutationInput, inferMutationOutput, trpc } from "~/utils/trpc";
 import { MutationForm, OnSuccess } from "./forms/MutationForm";
 import { SubmitButton } from "./forms/SubmitButton";
 import { TextField } from "./forms/TextField";
+import { useTypeForm } from "./forms/useTypeForm";
 
 /** Add a unique ID for the React key when rendering the UI. */
 interface LocalShortenedUrl extends inferMutationOutput<"shortenUrl"> {
@@ -16,6 +17,7 @@ interface LocalShortenedUrl extends inferMutationOutput<"shortenUrl"> {
 
 export function UrlShortenerForm() {
   const shortenUrl = trpc.useMutation("shortenUrl");
+  const { field, ...form } = useTypeForm<inferMutationInput<"shortenUrl">>();
 
   const [savedUrls, setSavedUrls] = useState<LocalShortenedUrl[]>([]);
 
@@ -28,17 +30,19 @@ export function UrlShortenerForm() {
 
   return (
     <Flex direction="column" gap={2}>
-      <MutationForm mutation={shortenUrl} onSuccess={onSuccess}>
+      <MutationForm mutation={shortenUrl} form={form} onSuccess={onSuccess}>
         <Flex align="stretch" gap={2}>
           <TextField
-            name="originalUrl"
+            field={field("originalUrl")}
             inputProps={{
               size: "lg",
               placeholder: "Shorten your link",
               autoComplete: "off",
             }}
           />
-          <SubmitButton size="lg">Shorten</SubmitButton>
+          <SubmitButton size="lg" formCtx={form}>
+            Shorten
+          </SubmitButton>
         </Flex>
       </MutationForm>
       {savedUrls.length > 0 && (

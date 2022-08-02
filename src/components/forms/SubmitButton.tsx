@@ -1,14 +1,15 @@
 import { Button, ButtonProps } from "@chakra-ui/react";
-import { useFormContext } from "react-hook-form";
+import { useForm } from "react-hook-form";
 
-export function SubmitButton(buttonProps: ButtonProps) {
-  const form = useFormContext();
-  form.formState.errors;
+export interface SubmitButtonProps extends ButtonProps {
+  formCtx: Pick<ReturnType<typeof useForm>, "formState">;
+}
 
+export function SubmitButton({ formCtx, ...buttonProps }: SubmitButtonProps) {
   return (
     <Button
       type="submit"
-      isLoading={form.formState.isSubmitting}
+      isLoading={formCtx.formState.isSubmitting}
       {...buttonProps}
     >
       {buttonProps.children ?? "Submit"}

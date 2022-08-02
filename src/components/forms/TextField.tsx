@@ -5,21 +5,26 @@ import {
   Input,
   InputProps,
 } from "@chakra-ui/react";
-import { useController } from "react-hook-form";
+import { FieldHandle } from "./useTypeForm";
 
 export interface TextFieldProps extends BoxProps {
-  name: string;
+  field: FieldHandle<string>;
   inputProps?: InputProps;
 }
 
-export function TextField({ name, inputProps, ...boxProps }: TextFieldProps) {
-  const { field, fieldState } = useController({ name });
+export function TextField({ field, inputProps, ...boxProps }: TextFieldProps) {
+  const { fieldProps, fieldState } = field.useController();
 
   const fieldError = fieldState.error;
 
   return (
-    <FormControl {...boxProps} isInvalid={fieldState.invalid}>
-      <Input {...field} value={String(field.value ?? "")} {...inputProps} />
+    <FormControl {...boxProps} isInvalid={!!fieldState.error}>
+      <Input
+        {...fieldProps}
+        value={String(fieldProps.value ?? "")}
+        onChange={(e) => fieldProps.onChange(e.target.value)}
+        {...inputProps}
+      />
       {fieldError && <FormErrorMessage>{fieldError.message}</FormErrorMessage>}
     </FormControl>
   );

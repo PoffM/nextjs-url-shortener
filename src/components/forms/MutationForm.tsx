@@ -1,14 +1,7 @@
 import { FormErrorMessage } from "@chakra-ui/react";
 import { toPairs } from "lodash";
 import { PropsWithChildren, useState } from "react";
-import {
-  DeepPartial,
-  FormProvider,
-  Path,
-  UnpackNestedValue,
-  useForm,
-  UseFormReturn,
-} from "react-hook-form";
+import { Path, UseFormReturn } from "react-hook-form";
 import { UseMutationResult } from "react-query";
 import type { AppRouter } from "~/server/routers/appRouter";
 import { inferMutationInput, inferMutationOutput, trpc } from "~/utils/trpc";
@@ -20,12 +13,12 @@ export type MutationFormProps<
   TInput = inferMutationInput<TPath>,
   TOutput = inferMutationOutput<TPath>
 > = PropsWithChildren<{
+  form: UseFormReturn<TInput>;
   mutation: UseMutationResult<
     TOutput,
     ReturnType<typeof trpc.useMutation>["error"],
     TInput
   >;
-  defaultValues?: UnpackNestedValue<DeepPartial<TInput>>;
   onSuccess?: OnSuccess<TPath, TInput, TOutput>;
 }>;
 
@@ -50,12 +43,10 @@ export function MutationForm<
   TOutput = inferMutationOutput<TPath>
 >({
   children,
+  form,
   mutation,
-  defaultValues,
   onSuccess,
 }: MutationFormProps<TPath, TInput, TOutput>) {
-  const form = useForm<TInput>({ defaultValues });
-
   // Top-level form error message:
   const [formError, setFormError] = useState<string | null>(null);
 
@@ -85,9 +76,9 @@ export function MutationForm<
   });
 
   return (
-    <FormProvider {...form}>
+    <form onSubmit={(e) => void onSubmit(e)}>
       {formError ? "" : <FormErrorMessage>{formError}</FormErrorMessage>}
-      <form onSubmit={(e) => void onSubmit(e)}>{children}</form>
-    </FormProvider>
+      {children}
+    </form>
   );
 }
