@@ -1,6 +1,7 @@
-import { FormErrorMessage } from "@chakra-ui/react";
+import { Alert, AlertDescription, AlertIcon } from "@chakra-ui/react";
+import { TRPCClientError } from "@trpc/client";
 import { toPairs } from "lodash";
-import { PropsWithChildren, useState } from "react";
+import { ReactNode, useState } from "react";
 import { Path, UseFormReturn } from "react-hook-form";
 import { UseMutationResult } from "react-query";
 import type { AppRouter } from "~/server/routers/appRouter";
@@ -8,21 +9,22 @@ import { inferMutationInput, inferMutationOutput, trpc } from "~/utils/trpc";
 
 type MutationKey = keyof AppRouter["_def"]["mutations"];
 
-export type MutationFormProps<
+export interface MutationFormProps<
   TPath extends MutationKey,
   TInput = inferMutationInput<TPath>,
   TOutput = inferMutationOutput<TPath>
-> = PropsWithChildren<{
+> {
   form: UseFormReturn<TInput>;
   mutation: UseMutationResult<
     TOutput,
     ReturnType<typeof trpc.useMutation>["error"],
     TInput
   >;
-  onSuccess?: OnSuccess<TPath, TInput, TOutput>;
-}>;
+  onSuccess?: OnSuccessFn<TPath, TInput, TOutput>;
+  children?: ReactNode;
+}
 
-export type OnSuccess<
+export type OnSuccessFn<
   TPath extends MutationKey,
   TInput = inferMutationInput<TPath>,
   TOutput = inferMutationOutput<TPath>
@@ -33,7 +35,6 @@ export type OnSuccess<
 
 /**
  * Renders a form that:
- * * Provides react-hook-form context.
  * * Submits the data with a TRPC mutation.
  * * Provides form and field error messages from the back-end.
  */
@@ -53,10 +54,11 @@ export function MutationForm<
   const onSubmit = form.handleSubmit(async (input) => {
     setFormError(null);
     try {
-      return await mutation.mutateAsync(input as TInput, {
-        onSuccess: (data) => onSuccess?.({ data, form }),
+      const data = await mutation.mutateAsync(input as TInput, {
         onError: (error) => {
-          const zodError = error?.data?.zodError;
+          if (!error) return;
+
+          const zodError = error.data?.zodError;
           if (zodError) {
             for (const [field, messages] of toPairs(zodError.fieldErrors)) {
               const message = messages?.join(", ");
@@ -68,16 +70,29 @@ export function MutationForm<
             if (formErrorMessage) {
               setFormError(formErrorMessage);
             }
+          } else {
+            setFormError(error.message);
           }
         },
       });
-      // eslint-disable-next-line no-empty
-    } catch {}
+      await onSuccess?.({ data, form });
+    } catch (error) {
+      // TRPC errors are already handled in the "onError" callback;
+      // Handle non-trpc errors here:
+      if (error instanceof Error && !(error instanceof TRPCClientError)) {
+        setFormError(error.message);
+      }
+    }
   });
 
   return (
     <form onSubmit={(e) => void onSubmit(e)}>
-      {formError ? "" : <FormErrorMessage>{formError}</FormErrorMessage>}
+      {formError && (
+        <Alert status="error" borderRadius="md" my={2}>
+          <AlertIcon />
+          <AlertDescription>{formError}</AlertDescription>
+        </Alert>
+      )}
       {children}
     </form>
   );

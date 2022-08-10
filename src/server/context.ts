@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { PrismaClient } from "@prisma/client";
 import * as trpc from "@trpc/server";
 import * as trpcNext from "@trpc/server/adapters/next";
@@ -31,7 +30,8 @@ export const globalContext = { prisma, hashids };
  * @link https://trpc.io/docs/context
  */
 export function requestContext(
-  _opts: Partial<trpcNext.CreateNextContextOptions>
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  opts: Partial<trpcNext.CreateNextContextOptions>
 ) {
   return { ...globalContext };
 }

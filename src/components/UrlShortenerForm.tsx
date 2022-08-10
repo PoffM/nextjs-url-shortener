@@ -5,7 +5,7 @@ import NextLink from "next/link";
 import { useState } from "react";
 import { CopyButton } from "~/components/CopyButton";
 import { inferMutationInput, inferMutationOutput, trpc } from "~/utils/trpc";
-import { MutationForm, OnSuccess } from "./forms/MutationForm";
+import { MutationForm, OnSuccessFn } from "./forms/MutationForm";
 import { SubmitButton } from "./forms/SubmitButton";
 import { TextField } from "./forms/TextField";
 import { useTypeForm } from "./forms/useTypeForm";
@@ -21,7 +21,7 @@ export function UrlShortenerForm() {
 
   const [savedUrls, setSavedUrls] = useState<LocalShortenedUrl[]>([]);
 
-  const onSuccess: OnSuccess<"shortenUrl"> = ({ data: savedUrl, form }) => {
+  const onSuccess: OnSuccessFn<"shortenUrl"> = ({ data: savedUrl, form }) => {
     setSavedUrls((current) =>
       [{ ...savedUrl, key: uniqueId() }, ...current].slice(0, 3)
     );
